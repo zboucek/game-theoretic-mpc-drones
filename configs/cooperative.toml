@@ -1,0 +1,49 @@
+# Article defaults, Python 3.11 / CPU. Copy this file before editing.
+# All lengths: metres; time: seconds; acceleration: m/s^2; jerk: m/s^3.
+# States: [px, py, pz, vx, vy, vz]. Targets/obstacles: [x, y, z].
+# blocks contains positive durations in planning steps; sum(blocks) = horizon.
+# Changing dt changes prediction, interval checks, integration and metrics.
+# physics_hz / pid_hz and dt * pid_hz must both be integers.
+# Solver tolerances and candidate acceptance retain the article policy.
+study = "cooperative"
+seed = 20261023
+methods = ["gne", "vgne"]
+
+[model]
+# Rows follow the agent ordering; pursuers precede evaders.
+states = [[-0.3, 0.0, 1.0, 0.2, 0.0, 0.0], [0.3, 0.0, 1.0, -0.1, 0.0, 0.0], [0.0, 2.0, 1.0, 0.0, 0.0, 0.0]]
+# Rows follow the agent ordering; pursuers precede evaders.
+targets = [[10.0, 0.0, 1.0], [-6.0, 0.0, 1.0], [0.0, -2.0, 1.0]]
+obstacles = []
+pursuers = 0
+blocks = [1, 1, 2, 4, 6, 6]
+dt = 0.1
+position_weight = 1.0
+velocity_weight = 1.0
+repulsion_weight = 1.0
+effort_weight = 0.1
+terminal_scale = 1.0
+input_bound = 2.0
+speed_bound = 2.0
+jerk_bound = 6.0
+separation = 0.55
+altitude_bounds = [0.35, 1.95]
+max_iterations = 200
+response_sweeps = 3
+max_sweeps = 30
+# Active for pursuit-evasion only; all six coefficients are forwarded.
+adversarial_weights = {goal = 100.0, evasion = 10.0, pursuit = 10.0, repulsion = 2.0, obstacle = 5.0, effort = 0.1}
+
+[execution]
+# Planning steps; simulated duration = updates * dt. Short runs may not arrive.
+updates = 300
+plant = "pybullet"
+pid_hz = 120
+physics_hz = 240
+pid_mode = "limited"
+reserve_retry = true
+physical_speed_bound = 2.5
+physical_separation = 0.5
+physical_altitude_bounds = [0.3, 2.0]
+emergency_jerk_bound = 20.0
+recovery_speed_margin = 0.2

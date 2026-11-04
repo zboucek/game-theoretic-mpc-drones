@@ -1,0 +1,1 @@
+Compact numerical plotting inputs and the offline laboratory CSV, licensed CC BY 4.0. `manifest.json` checks these files and pins the separate complete audit dataset by version and SHA-256. Figures/tables do not require that dataset; full independent `verify` does. See [formats and provenance](../docs/DATA.md) and [dataset record](../zenodo/README.md).

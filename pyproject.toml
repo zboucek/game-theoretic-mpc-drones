@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=77,<83", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "game-theory-mpc"
+version = "1.0.0"
+description = "Full-information GNE-MPC reference planners for cooperative and adversarial drone coordination"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md"]
+authors = [{name = "Zdeněk Bouček", email = "zboucek@fav.zcu.cz"}]
+dependencies = [
+    "numpy>=2.2,<2.5", "scipy>=1.15,<1.18", "jax>=0.7.2,<0.8",
+    "nashopt==1.1.0",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.optional-dependencies]
+reproduction = ["matplotlib>=3.10,<3.11", "pillow>=12,<13"]
+test = ["pytest>=8,<10"]
+dev = ["build>=1,<2", "twine>=6,<7"]
+
+[project.urls]
+Repository = "https://github.com/zboucek/game-theoretic-mpc-drones"
+
+[tool.setuptools]
+packages = ["game_theory_mpc", "experiments", "experiments.equilibrium_selection", "tools"]
+
+[tool.setuptools.package-dir]
+game_theory_mpc = "src/game_theory_mpc"
+experiments = "experiments"
+tools = "tools"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -p no:launch_testing -p no:launch_ros"
+markers = ["simulation: requires the pinned gym-pybullet-drones dependency"]

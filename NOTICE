@@ -1,0 +1,16 @@
+Game-Theoretic MPC for Drone Swarm Coordination, version 1.0.0
+Copyright 2026 Zdeněk Bouček
+
+The original framework code and documentation are licensed under the MIT License
+provided in LICENSE. This does not relicense any third-party dependency.
+
+This framework builds on NashOpt by Alberto Bemporad. NashOpt is an external
+Apache-2.0 dependency; its source code is not included in this distribution.
+https://github.com/bemporad/nashopt
+
+The companion simulation uses gym-pybullet-drones by Jacopo Panerati and
+contributors, an external MIT dependency.
+https://github.com/learnsyslab/gym-pybullet-drones
+
+Data and figures have a separate CC BY 4.0 license, as specified in LICENSE-DATA.
+These attribution notices do not modify the licenses.

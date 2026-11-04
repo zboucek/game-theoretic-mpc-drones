@@ -1,0 +1,459 @@
+{
+  "schema_version": 2,
+  "article": "A Game-Theoretic MPC Framework for Cooperative and Adversarial Drone Coordination",
+  "licenses": {
+    "software": "MIT",
+    "data_and_figures": "CC-BY-4.0"
+  },
+  "experiments": [
+    "cooperative-flight",
+    "pursuit-evasion",
+    "equilibrium-selection",
+    "weight-tuning",
+    "scalability",
+    "hardware"
+  ],
+  "checks": [
+    {
+      "key": "selection.static_attempts",
+      "expected": 270,
+      "atol": 0
+    },
+    {
+      "key": "selection.episodes",
+      "expected": 90,
+      "atol": 0
+    },
+    {
+      "key": "selection.diagnosed",
+      "expected": 182,
+      "atol": 0
+    },
+    {
+      "key": "selection.refuted",
+      "expected": 74,
+      "atol": 0
+    },
+    {
+      "key": "selection.checked_records",
+      "expected": 7399,
+      "atol": 0
+    },
+    {
+      "key": "cooperative.gne.accepted",
+      "expected": 300,
+      "atol": 0
+    },
+    {
+      "key": "cooperative.vgne.accepted",
+      "expected": 299,
+      "atol": 0
+    },
+    {
+      "key": "cooperative.gne.minimum_distance_m",
+      "expected": 0.54626,
+      "atol": 5e-06
+    },
+    {
+      "key": "cooperative.vgne.minimum_distance_m",
+      "expected": 0.54749,
+      "atol": 5e-06
+    },
+    {
+      "key": "adversarial.joint_arrival_s",
+      "expected": 16.35,
+      "atol": 1e-08
+    },
+    {
+      "key": "scalability.cases",
+      "expected": 42,
+      "atol": 0
+    },
+    {
+      "key": "scalability.timed_samples",
+      "expected": 210,
+      "atol": 0
+    },
+    {
+      "key": "scalability.cooperative_accepted",
+      "expected": 125,
+      "atol": 0
+    },
+    {
+      "key": "scalability.cooperative_timed",
+      "expected": 140,
+      "atol": 0
+    },
+    {
+      "key": "scalability.adversarial_feasible",
+      "expected": 70,
+      "atol": 0
+    },
+    {
+      "key": "scalability.independently_checked",
+      "expected": 252,
+      "atol": 0
+    },
+    {
+      "key": "scalability.matched_pairs",
+      "expected": 9,
+      "atol": 0
+    },
+    {
+      "key": "hardware.mpc_steps",
+      "expected": 426,
+      "atol": 0
+    },
+    {
+      "key": "hardware.max_solver_ms",
+      "expected": 24.2,
+      "atol": 0.05
+    },
+    {
+      "key": "hardware.max_loop_ms",
+      "expected": 41.0,
+      "atol": 0.05
+    },
+    {
+      "key": "hardware.command_tracking_rmse_m",
+      "expected": 0.071,
+      "atol": 0.0005
+    },
+    {
+      "key": "selection.methods.gne.diagnosed",
+      "expected": 59,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.vgne.diagnosed",
+      "expected": 33,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.potential.diagnosed",
+      "expected": 90,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.gne.refuted",
+      "expected": 49,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.vgne.refuted",
+      "expected": 25,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.potential.refuted",
+      "expected": 0,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.gne.accepted",
+      "expected": 42,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.vgne.accepted",
+      "expected": 42,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.potential.accepted",
+      "expected": 90,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.gne.completed",
+      "expected": 10,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.vgne.completed",
+      "expected": 10,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.potential.completed",
+      "expected": 30,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.gne.median_accepted_s",
+      "expected": 0.2919,
+      "atol": 5e-05
+    },
+    {
+      "key": "selection.methods.vgne.median_accepted_s",
+      "expected": 0.1109,
+      "atol": 5e-05
+    },
+    {
+      "key": "selection.methods.potential.median_accepted_s",
+      "expected": 0.0146,
+      "atol": 5e-05
+    },
+    {
+      "key": "cooperative.gne.applied",
+      "expected": 300,
+      "atol": 0
+    },
+    {
+      "key": "cooperative.vgne.applied",
+      "expected": 300,
+      "atol": 0
+    },
+    {
+      "key": "cooperative.gne.duration_s",
+      "expected": 30,
+      "atol": 1e-09
+    },
+    {
+      "key": "cooperative.vgne.duration_s",
+      "expected": 30,
+      "atol": 1e-09
+    },
+    {
+      "key": "cooperative.gne.arrivals_s.0",
+      "expected": 6.81,
+      "atol": 0.005
+    },
+    {
+      "key": "cooperative.vgne.arrivals_s.0",
+      "expected": 6.72,
+      "atol": 0.005
+    },
+    {
+      "key": "adversarial.flight.goal_errors_m.0",
+      "expected": 0.17,
+      "atol": 0.0005
+    },
+    {
+      "key": "adversarial.flight.goal_errors_m.1",
+      "expected": 0.231,
+      "atol": 0.0005
+    },
+    {
+      "key": "adversarial.flight.minimum_nearest_pursuer_m.0",
+      "expected": 0.58488,
+      "atol": 5e-06
+    },
+    {
+      "key": "adversarial.flight.minimum_nearest_pursuer_m.1",
+      "expected": 0.59253,
+      "atol": 5e-06
+    },
+    {
+      "key": "weights.design_improvement_percent",
+      "expected": 2.42,
+      "atol": 0.005
+    },
+    {
+      "key": "scalability.h30_ratios.gne",
+      "expected": 3.61,
+      "atol": 0.005
+    },
+    {
+      "key": "scalability.h30_ratios.vgne",
+      "expected": 9.65,
+      "atol": 0.005
+    },
+    {
+      "key": "scalability.h30_ratios.adversarial_br",
+      "expected": 9.43,
+      "atol": 0.005
+    },
+    {
+      "key": "selection.methods.gne.passage",
+      "expected": 4,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.vgne.passage",
+      "expected": 4,
+      "atol": 0
+    },
+    {
+      "key": "selection.methods.potential.passage",
+      "expected": 30,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.manual.cases",
+      "expected": 12,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.manual.success",
+      "expected": 12,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.manual.accepted",
+      "expected": 1200,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.manual.applied",
+      "expected": 1200,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.automatic.cases",
+      "expected": 12,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.automatic.success",
+      "expected": 12,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.automatic.accepted",
+      "expected": 1196,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.automatic.applied",
+      "expected": 1200,
+      "atol": 0
+    },
+    {
+      "key": "weights.test.paired_medians.error_change_percent",
+      "expected": -1.28,
+      "atol": 0.005
+    },
+    {
+      "key": "weights.test.paired_medians.effort_change_percent",
+      "expected": 12.43,
+      "atol": 0.005
+    },
+    {
+      "key": "weights.test.paired_medians.arrival_change_s",
+      "expected": -0.4,
+      "atol": 0.005
+    },
+    {
+      "key": "weights.physics.manual.accepted",
+      "expected": 199,
+      "atol": 0
+    },
+    {
+      "key": "weights.physics.automatic.accepted",
+      "expected": 200,
+      "atol": 0
+    },
+    {
+      "key": "weights.physics.manual.applied",
+      "expected": 200,
+      "atol": 0
+    },
+    {
+      "key": "weights.physics.automatic.applied",
+      "expected": 200,
+      "atol": 0
+    }
+  ],
+  "profile": "article",
+  "release_version": "1.0.0",
+  "article_figures": [
+    "docs/figures/cooperative_three_moving.pdf",
+    "docs/figures/adversarial_arrival.pdf",
+    "docs/figures/scalability_current.pdf",
+    "docs/figures/numerical_conflict_example.pdf"
+  ],
+  "supporting_figures": [
+    "docs/figures/weight_tuning_design_transfer.pdf",
+    "docs/figures/hardware_xy.pdf",
+    "docs/figures/hardware_timing.pdf"
+  ],
+  "source_repository_commit": "481076c4a5dff93a7b1d30e1e7c2a2794a664657",
+  "manuscript_sha256": "7001befb5406cae820d70111be2294cae370ca6fc8169372e2362feecef34b09",
+  "distribution": "compact-software",
+  "audit_dataset": {
+    "manifest_sha256": "14718dd0353371a6af981e04a399f80f0ff2722800b454e850a4ea44dc415b69",
+    "filename": "release-game-theory-mpc-article-data-1.0.0.tar.xz",
+    "version": "1.0.0",
+    "sha256": "d6d94ad9ceac6219bcbfbe36208d3ef87ea6069e89325803b2d443d78e8a92a7",
+    "bytes": 69228368,
+    "records": 16319,
+    "doi": "10.5281/zenodo.23947592",
+    "url": null,
+    "publication_status": "DOI assigned",
+    "record_url": "https://doi.org/10.5281/zenodo.23947592"
+  },
+  "reference_views": "data/reference.zip contains plotting inputs and published summaries; it is not the full numerical audit.",
+  "files": [
+    {
+      "path": "data/README.md",
+      "sha256": "f4275a172fb5c355b284de387a7671581bdf15e7043d7b464c237a4d58c1dfb6",
+      "bytes": 355
+    },
+    {
+      "path": "data/hardware/run.csv",
+      "sha256": "aa61fe749eca21bb3709f573c5bac78770e2365ec7635ad2d1566b70f21c64ed",
+      "bytes": 1185698
+    },
+    {
+      "path": "data/reference.zip",
+      "sha256": "d6ddcbdb3e1149a7dd11eb7589273134063efede2a3867baff8e74a8203105dc",
+      "bytes": 2586375
+    },
+    {
+      "path": "dependencies/gym_pybullet_drones-2.2.0+mpc.01563120-py3-none-any.whl",
+      "sha256": "c8a174f2225798ab5242d7d2cc75980359f9a1c322b381fc3303cefd68a6f321",
+      "bytes": 12969039
+    },
+    {
+      "path": "docs/figures/adversarial_arrival.pdf",
+      "sha256": "fa10ed95b7177f01a825d09f213618277d07a0a0b5677a131fe215dea2898441",
+      "bytes": 29551
+    },
+    {
+      "path": "docs/figures/cooperative_three_moving.pdf",
+      "sha256": "46489cb9ac39dbe80d4f6d35296bfef79591a69313ebc335bc12380760f987be",
+      "bytes": 24551
+    },
+    {
+      "path": "docs/figures/hardware_timing.pdf",
+      "sha256": "f1f6745e661d8533e210f6fe3ea970d0092d627268c2481acc5e6b0eee2604fa",
+      "bytes": 17776
+    },
+    {
+      "path": "docs/figures/hardware_xy.pdf",
+      "sha256": "ad16ef0c27e8e201d68f60d87c77ccf077f7002947efa35fb1a4db0602f7c2ca",
+      "bytes": 18540
+    },
+    {
+      "path": "docs/figures/numerical_conflict_example.pdf",
+      "sha256": "644cd5b4ec45ddef5efb4c099a40d0edc3effac0180d8a92cedef6ffca749591",
+      "bytes": 33111
+    },
+    {
+      "path": "docs/figures/scalability_current.pdf",
+      "sha256": "83a93b5fda251f6a58f61ab8cc19cf2e537f36e423e882554c8524e5318de691",
+      "bytes": 25442
+    },
+    {
+      "path": "docs/figures/weight_tuning_design_transfer.pdf",
+      "sha256": "e219d517a29af35a4d5761d231ba852b756464451b24d470b5725c910b54b950",
+      "bytes": 24668
+    },
+    {
+      "path": "media/cooperative.gif",
+      "sha256": "41d22abc50de3c18663dd1754d0eeeecddf44def39e78fa098fefae4b4ead811",
+      "bytes": 1215238
+    },
+    {
+      "path": "media/cooperative.json",
+      "sha256": "0e804c8629eab7bb03fe07b337487799ba5be4b0847a064df466899df668f3b2",
+      "bytes": 368
+    },
+    {
+      "path": "media/cooperative.mp4",
+      "sha256": "e4999035461b7c5de303982e5d53e195bef70a332961e104b023ce9e283d87c6",
+      "bytes": 557912
+    }
+  ]
+}

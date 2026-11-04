@@ -1,0 +1,13 @@
+include README.md REPRODUCIBILITY.md CHANGELOG.md CITATION.cff LICENSE NOTICE LICENSE-DATA THIRD_PARTY_NOTICES.md .gitignore
+recursive-include requirements *.txt
+recursive-include tests *.py
+recursive-include tools *.py
+recursive-include examples *.py
+recursive-include experiments *.py
+recursive-include data *.json *.csv *.zip *.md
+recursive-include docs *.pdf *.md
+recursive-include dependencies *.whl
+recursive-include configs *.toml
+recursive-include media *.gif *.mp4 *.json
+recursive-include zenodo *.json *.md
+global-exclude __pycache__ *.py[cod]

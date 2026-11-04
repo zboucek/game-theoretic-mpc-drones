@@ -1,0 +1,10 @@
+-r core.txt
+pybullet==3.2.7
+gymnasium==1.2.3
+transforms3d==0.4.2
+control==0.10.2
+stable-baselines3==2.7.1
+# CPU wheel avoids installing CUDA packages for CPU-only article experiments.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.10.0+cpu
+./dependencies/gym_pybullet_drones-2.2.0+mpc.01563120-py3-none-any.whl

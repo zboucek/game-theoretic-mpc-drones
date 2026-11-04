@@ -1,0 +1,12 @@
+{
+  "simulated_seconds": 8,
+  "width": 960,
+  "fps": 10,
+  "frames": 80,
+  "palette_colors": 128,
+  "loop": 0,
+  "source_sha256": {
+    "gne/cooperative_terminal/trajectory.npz": "caadaca7cc77f764125272d426798e47f5d7c6114be21f2aace5334c157bfe95",
+    "vgne/cooperative_terminal/trajectory.npz": "bb0bf84bd27bcf8a329e02ad964061c45005194a71dc9dd78988ee74364627ea"
+  }
+}

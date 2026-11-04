@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this framework, its data or its results in scientific work, please cite the paper in preferred-citation. Cite this software separately to identify the version used, and credit NashOpt and gym-pybullet-drones where used."
+type: software
+title: "Game-Theoretic MPC for Drone Swarm Coordination"
+version: 1.0.0
+date-released: 2026-10-25
+license: MIT
+authors:
+  - family-names: Bouček
+    given-names: Zdeněk
+    affiliation: University of West Bohemia
+    email: zboucek@fav.zcu.cz
+repository-code: "https://github.com/zboucek/game-theoretic-mpc-drones"
+preferred-citation:
+  type: unpublished
+  title: "A Game-Theoretic MPC Framework for Cooperative and Adversarial Drone Coordination"
+  year: 2026
+  authors:
+    - family-names: Bouček
+      given-names: Zdeněk
+    - family-names: Flídr
+      given-names: Miroslav

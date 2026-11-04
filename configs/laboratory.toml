@@ -1,0 +1,25 @@
+# Article defaults, Python 3.11 / CPU. Copy this file before editing.
+# All lengths: metres; time: seconds; acceleration: m/s^2; jerk: m/s^3.
+# States: [px, py, pz, vx, vy, vz]. Targets/obstacles: [x, y, z].
+# blocks contains positive durations in planning steps; sum(blocks) = horizon.
+# Changing dt changes prediction, interval checks, integration and metrics.
+# physics_hz / pid_hz and dt * pid_hz must both be integers.
+# Solver tolerances and candidate acceptance retain the article policy.
+study = "laboratory"
+seed = 20261023
+methods = []
+
+[laboratory]
+# CSV path is relative to the working directory; analysis is offline.
+csv = "data/hardware/run.csv"
+horizon = 10
+dt = 0.1
+q_track = 10.0
+q_du = 0.1
+backend = "fast"
+# Planning steps; simulated duration = updates * dt. Short runs may not arrive.
+updates = 20
+# Rows follow the agent ordering; pursuers precede evaders.
+states = [[-0.525875, 0.23395, 0.354241, 0.0, 0.0, 0.0], [-1.272836, -0.954599, 0.382919, 0.0, 0.0, 0.0], [-0.185134, -0.570738, 0.342578, 0.0, 0.0, 0.0], [-0.455303, -1.473704, 0.352116, 0.0, 0.0, 0.0], [-1.251909, -0.117541, 0.367645, 0.0, 0.0, 0.0]]
+# Rows follow the agent ordering; pursuers precede evaders.
+targets = [[0.274049, 0.234039, 0.531984], [-0.472213, -0.956304, 0.518316], [0.615032, -0.57029, 0.530911], [0.344715, -1.473813, 0.532175], [-0.451504, -0.117646, 0.53433]]
