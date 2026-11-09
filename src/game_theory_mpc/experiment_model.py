@@ -21,6 +21,7 @@ def make_model(config, method, execution=None, recovery=False):
         input_bound=c.input_bound,
         max_iterations=c.max_iterations,
         response_sweeps=c.response_sweeps,
+        response_fractions=c.response_fractions,
         adversarial_weights=AdversarialWeights(**c.adversarial_weights),
         cooperative_weights=CooperativeWeights(
             c.position_weight, c.repulsion_weight, c.effort_weight

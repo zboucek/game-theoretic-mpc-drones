@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Independent dynamics, scalar-cost and flight-telemetry checks (V-A/B).
+"""Independent dynamics, scalar-cost and flight-telemetry checks (VI-A/B).
 
 evaluate reconstructs predictions explicitly; interval_extrema checks between
 nodes, and pid_telemetry checks recorded force/reference consistency."""

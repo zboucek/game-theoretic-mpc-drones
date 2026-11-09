@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Quadrotor reference/PID interface for article V-A/B.
+"""Quadrotor reference/PID interface for article VI-A/B.
 
 The adapter adds mass-times-acceleration feedforward and optional force limits
 to the pinned simulator PID. The flight driver chooses feedforward/limits

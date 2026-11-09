@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Strict, portable configuration for the six article studies (SI units)."""
+"""Strict, portable configuration for the five article studies (SI units)."""
 from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 import math
@@ -35,6 +35,7 @@ class ModelConfig:
     altitude_bounds: list = field(default_factory=lambda: [0.35, 1.95])
     max_iterations: int = 200
     response_sweeps: int = 3
+    response_fractions: list = field(default_factory=lambda: [0.7, 0.35, 1.0])
     max_sweeps: int = 30
     # All six coefficients are used only when pursuers > 0.
     adversarial_weights: dict = field(
@@ -98,18 +99,6 @@ class ControlledConfig:
 
 
 @dataclass(frozen=True)
-class TuningConfig:
-    baseline: list = field(default_factory=lambda: [1.0, 1.0, 1.0])
-    axes: list = field(
-        default_factory=lambda: [
-            [0.3, 1.0, 3.0, 10.0],
-            [0.3, 1.0, 3.0],
-            [0.1, 1.0, 3.0],
-        ]
-    )
-
-
-@dataclass(frozen=True)
 class BenchmarkConfig:
     repeats: int = 5
     warmups: int = 1
@@ -136,7 +125,6 @@ class ExperimentConfig:
     model: ModelConfig | None = None
     execution: ExecutionConfig | None = None
     controlled: ControlledConfig | None = None
-    tuning: TuningConfig | None = None
     benchmark: BenchmarkConfig | None = None
     laboratory: LaboratoryConfig | None = None
     cases: list = field(default_factory=list)
@@ -151,7 +139,6 @@ class ExperimentConfig:
             "cooperative",
             "pursuit-evasion",
             "controlled",
-            "weights",
             "scalability",
             "laboratory",
         }
@@ -164,7 +151,6 @@ class ExperimentConfig:
             **{
                 "pursuit-evasion": {"model", "execution"},
                 "controlled": {"controlled"},
-                "weights": {"model", "execution", "tuning"},
                 "scalability": {"model", "benchmark"},
                 "laboratory": {"laboratory"},
             },
@@ -175,7 +161,6 @@ class ExperimentConfig:
                 "model",
                 "execution",
                 "controlled",
-                "tuning",
                 "benchmark",
                 "laboratory",
             )
@@ -217,7 +202,6 @@ class ExperimentConfig:
             "cooperative": {"gne", "vgne", "potential"},
             "pursuit-evasion": {"adversarial_br"},
             "controlled": {"gne", "vgne", "potential"},
-            "weights": {"vgne"},
         }
         if self.study in expected_methods and (
             not self.methods or set(self.methods) - expected_methods[self.study]
@@ -240,6 +224,12 @@ class ExperimentConfig:
                 positive(getattr(m, k), "model." + k)
             for k in ("max_iterations", "response_sweeps", "max_sweeps"):
                 positive(getattr(m, k), "model." + k, True)
+            if not m.response_fractions or any(
+                isinstance(v, bool) or not isinstance(v, (int, float))
+                or not math.isfinite(v) or not 0 < v <= 1
+                for v in m.response_fractions
+            ):
+                raise ValueError("model.response_fractions must be nonempty and lie in (0, 1]")
             for k in (
                 "position_weight",
                 "velocity_weight",
@@ -273,10 +263,10 @@ class ExperimentConfig:
             from .blocked_game_mpc import AdversarialWeights
 
             construct(AdversarialWeights, m.adversarial_weights)
-            if self.study in ("weights", "scalability"):
+            if self.study == "scalability":
                 if m.states or m.targets or m.pursuers or m.obstacles:
                     raise ValueError(
-                        "For weights/scalability, put geometry in cases, not model"
+                        "For scalability, put geometry in cases, not model"
                     )
             else:
                 geometry(m.states, m.targets, m.pursuers)
@@ -284,14 +274,6 @@ class ExperimentConfig:
                     raise ValueError(
                         "Pursuit-evasion needs pursuers; cooperation needs zero pursuers"
                     )
-        if self.study == "weights" and (
-            self.model.position_weight,
-            self.model.velocity_weight,
-            self.model.repulsion_weight,
-        ) != (1.0, 1.0, 1.0):
-            raise ValueError(
-                "Set tuning.baseline and tuning.axes for a weight search, not model position/velocity/repulsion weights"
-            )
         if self.study == "scalability" and self.model.blocks != [1, 1, 2, 4, 6, 6]:
             raise ValueError("Set blocks in each scalability case, not in model")
         if self.execution:
@@ -337,10 +319,6 @@ class ExperimentConfig:
                 or e.physical_speed_bound < self.model.speed_bound
             ):
                 raise ValueError("Physical envelope must contain planned bounds")
-            if self.study == "weights" and e.plant != "nominal":
-                raise ValueError(
-                    "Weight search uses nominal dynamics; use cooperative for a physics transfer run"
-                )
         if self.controlled:
             c = self.controlled
             if type(c.agents) is not int or c.agents != 3:
@@ -375,7 +353,7 @@ class ExperimentConfig:
                 or set(c.loop_starts) - set(INITIALIZATIONS)
             ):
                 raise ValueError("Unknown controlled initialization")
-        if self.study in ("controlled", "weights", "scalability"):
+        if self.study in ("controlled", "scalability"):
             if not self.cases:
                 raise ValueError("Study requires cases")
             ids = set()
@@ -387,7 +365,6 @@ class ExperimentConfig:
                     raise ValueError("Each case requires id, states and targets")
                 allowed_keys = dict(
                     controlled={"id", "states", "targets", "geometry"},
-                    weights={"id", "states", "targets", "phase"},
                     scalability={
                         "id",
                         "states",
@@ -415,11 +392,11 @@ class ExperimentConfig:
                     raise ValueError("Case IDs must be unique simple file names")
                 ids.add(name)
                 n = geometry(row["states"], row["targets"], row.get("pursuers", 0))
-                if self.study in ("controlled", "weights") and (
+                if self.study == "controlled" and (
                     n != 3 or row.get("pursuers", 0)
                 ):
                     raise ValueError(
-                        "Controlled and weight studies require three cooperative agents"
+                        "The controlled study requires three cooperative agents"
                     )
                 if self.study == "controlled" and row.get("geometry") not in (
                     "head_on",
@@ -429,11 +406,6 @@ class ExperimentConfig:
                     raise ValueError(
                         "Controlled cases require geometry for initialization axes"
                     )
-                if self.study == "weights" and row.get("phase") not in (
-                    "train",
-                    "test",
-                ):
-                    raise ValueError("Weight cases require phase=train or test")
                 if self.study == "scalability":
                     if row.get("method") not in ("gne", "vgne", "adversarial_br") or (
                         row["method"] == "adversarial_br"
@@ -451,25 +423,6 @@ class ExperimentConfig:
                         raise ValueError("Benchmark cases require positive blocks")
         elif self.cases:
             raise ValueError("This study uses its section geometry, not cases")
-        if self.tuning:
-            if (
-                len(self.tuning.baseline) != 3
-                or len(self.tuning.axes) != 3
-                or not all(self.tuning.axes)
-            ):
-                raise ValueError(
-                    "Tuning requires three baseline weights and three axes"
-                )
-            for v in [
-                *self.tuning.baseline,
-                *(v for axis in self.tuning.axes for v in axis),
-            ]:
-                positive(v, "tuning weight")
-            if not all(
-                any(c["phase"] == phase for c in self.cases)
-                for phase in ("train", "test")
-            ):
-                raise ValueError("Tuning requires both train and test cases")
         if self.benchmark:
             positive(self.benchmark.repeats, "repeats", True)
             positive(self.benchmark.warmups, "warmups", True)
@@ -492,7 +445,6 @@ def load_config(path: str | Path) -> ExperimentConfig:
         model=ModelConfig,
         execution=ExecutionConfig,
         controlled=ControlledConfig,
-        tuning=TuningConfig,
         benchmark=BenchmarkConfig,
         laboratory=LaboratoryConfig,
     ).items():

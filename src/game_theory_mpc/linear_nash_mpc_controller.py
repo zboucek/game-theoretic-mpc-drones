@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
 
-"""Separable tracking backend for the five-drone integration (article V-C).
+"""Separable tracking backend for the five-drone integration (article VI-C).
 
 The fast and NashOpt/HiGHS paths solve the same unconstrained tracking model.
 The supplied flight log is analyzed offline by tools/hardware.py."""

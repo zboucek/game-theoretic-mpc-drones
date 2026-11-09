@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
 
-"""Connect UAV controller costs to reusable_gne (article III-B/D and IV-A).
+"""Connect UAV controller costs to reusable_gne (article sections III-B, IV-B and V-A).
 
 The parameter vector holds states, targets and fixed-capacity obstacles.
 This mixin builds the shared residual graph and shifts MPC warm starts."""

@@ -4,7 +4,7 @@
 
 Animation of the article's cooperative **PyBullet trajectories**: the first eight seconds of **simulated time**, at 10 frames/s. [Full MP4](media/cooperative.mp4). Physics pauses while a plan is solved.
 
-The main package contains the planners, six editable study configurations, examples, and compact numerical inputs for the article figures and table. Complete solver attempts and audit evidence are a **separate dataset** with DOI [10.5281/zenodo.23947592](https://doi.org/10.5281/zenodo.23947592). Code is MIT; data and visualizations are CC BY 4.0.
+The main package contains the planners, five editable study configurations, examples, and compact numerical inputs for the article figures and table. Complete solver attempts and audit evidence for these five studies are a **separate dataset**, prepared for Zenodo. Code is MIT; data and visualizations are CC BY 4.0.
 
 Use Python 3.11 on CPU, from this extracted directory:
 
@@ -32,6 +32,6 @@ Full independent numerical verification uses the optional dataset **without unpa
 python -m game_theory_mpc verify --audit-data ../release-game-theory-mpc-article-data-1.0.0.tar.xz
 ```
 
-Download the audit archive from the [Zenodo dataset record](https://doi.org/10.5281/zenodo.23947592); see [dataset version and checksums](zenodo/README.md). If the DOI is currently reserved, the files become available when the record is published. Figures/tables use compact numeric inputs and archived summaries; they do not claim to repeat the complete solver audit. Custom experiments do not require the reference dataset.
+See [dataset availability and proposed Zenodo metadata](zenodo/README.md). The dataset has been prepared locally; a Zenodo DOI has not yet been assigned. Figures/tables use compact numeric inputs and archived summaries; they do not claim to repeat the complete solver audit. Custom experiments do not require the reference dataset.
 
 Continue with [development and configuration](docs/DEVELOPMENT.md), [article-to-code map](docs/CODE_MAP.md), [controller APIs](docs/API.md), [data formats](docs/DATA.md), and [verification](REPRODUCIBILITY.md). Four short [examples](examples/) use the article methods. Regenerate the GIF without FFmpeg or another solve: `python -m tools.animate --source data/reference.zip --output outputs/cooperative.gif`.

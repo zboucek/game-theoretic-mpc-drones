@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Matched controller timing study for article IV-C.
+"""Matched controller timing study for article V-B.
 
 design defines agent/horizon sweeps and full/blocked pairs. Each serial worker
 restores identical inputs, discards one solve and records repeated calls.

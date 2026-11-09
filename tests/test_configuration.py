@@ -11,11 +11,33 @@ from game_theory_mpc.experiment_model import make_model, check_model
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_six_complete_configs():
+def test_five_complete_configs():
     configs = [load_config(p) for p in (ROOT / "configs").glob("*.toml")]
-    assert len(configs) == 6
+    assert {c.study for c in configs} == {
+        "cooperative", "pursuit-evasion", "controlled", "scalability", "laboratory"
+    }
     assert len(next(c for c in configs if c.study == "scalability").cases) == 42
     assert len(next(c for c in configs if c.study == "controlled").cases) == 15
+
+
+@pytest.mark.parametrize("fractions", [[], [0.0], [1.1], [float("nan")], [True]])
+def test_invalid_response_fractions_rejected(fractions):
+    c = load_config(ROOT / "configs/pursuit-evasion.toml")
+    with pytest.raises(ValueError, match="response_fractions"):
+        replace(c, model=replace(c.model, response_fractions=fractions)).validate()
+
+
+@pytest.mark.parametrize("fractions", [[0.7, 0.35, 1.0], [1.0]])
+def test_custom_response_fractions_change_the_executed_nominal_update(tmp_path, fractions):
+    c = load_config(ROOT / "configs/pursuit-evasion.toml")
+    c = replace(c, model=replace(c.model, blocks=[1, 2], response_fractions=fractions,
+                                response_sweeps=1),
+                execution=replace(c.execution, plant="nominal", updates=1))
+    output = run_experiment(c, tmp_path / "response")
+    record = json.loads((output / "adversarial_br/attempts/k000.json").read_text())
+    assert record["applied"]
+    assert record["response_fractions"] == fractions
+    assert record["attempts"][0]["fraction"] == fractions[0]
 
 
 @pytest.mark.parametrize(
@@ -260,36 +282,15 @@ def test_controlled_workflow_keeps_rejected_attempts_and_deviation_links(tmp_pat
     assert json.loads((output / "metrics.json").read_text())["static"] == 3
 
 
-def test_configured_weight_search_freezes_before_test(tmp_path):
-    c = load_config(ROOT / "configs/weights.toml")
-    x = [
-        [-2.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-        [2.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-        [0.0, 3.0, 1.0, 0.0, 0.0, 0.0],
-    ]
-    y = [r[:3] for r in x]
-    cases = [
-        dict(id="design", phase="train", states=x, targets=y),
-        dict(id="heldout", phase="test", states=x, targets=y),
-    ]
-    c = replace(
-        c,
-        cases=cases,
-        model=replace(c.model, blocks=[1, 1]),
-        execution=replace(c.execution, updates=6),
-        tuning=replace(
-            c.tuning,
-            baseline=[1.0, 1.0, 0.001],
-            axes=[[1.0, 1.0000001], [1.0], [0.001]],
-        ),
-    )
-    output = run_experiment(c, tmp_path / "tuning")
-    frozen = json.loads((output / "frozen_weights.json").read_text())
-    assert frozen["frozen_before_test"] and len(frozen["coordinate_trace"]) == 4
-    assert len(frozen["design_scores"]) == 2
-    result = json.loads((output / "metrics.json").read_text())
-    assert result["manual"]["heldout"]["applied"] == 6
-    assert result["automatic"]["heldout"]["success"]
+def test_deferred_weight_study_and_search_sections_are_rejected(tmp_path):
+    file = tmp_path / "weights.toml"
+    file.write_text('study = "weights"\n')
+    with pytest.raises(ValueError, match="Unknown study: weights"):
+        load_config(file)
+    file.write_text((ROOT / "configs/cooperative.toml").read_text()
+                    + '\n[tuning]\nbaseline = [1.0, 1.0, 1.0]\n')
+    with pytest.raises(ValueError, match="Invalid ExperimentConfig"):
+        load_config(file)
 
 
 def test_configured_scaling_restores_identical_starts_and_separates_warmup(tmp_path):

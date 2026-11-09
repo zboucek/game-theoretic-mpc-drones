@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Render the full/blocked computation figure for article IV-C.
+"""Render the full/blocked computation figure for article V-B.
 
 case_rows combines raw timings with independently recomputed acceptance flags.
 Rejected returned attempts stay on timing curves and use distinct markers."""
@@ -143,7 +143,7 @@ def main():
         curves(axes[0], rows, method, "blocked", "agents")
         for parameterization in ("blocked", "full"):
             curves(axes[1], rows, method, parameterization, "horizon")
-    axes[0].set(xlabel="Agents $N$", xticks=[2,4,6,8,10], ylabel="Complete solve [s]")
+    axes[0].set(xlabel="Drones $N$", xticks=[2,4,6,8,10], ylabel="Complete solve [s]")
     axes[1].set(xlabel="Horizon $H$", xticks=[10,20,30,40])
     for axis, caption in zip(axes, ("(a) $H=20$", "(b) $N=3/5$")):
         axis.annotate(caption, xy=(.5, 0), xycoords="axes fraction", xytext=(0, -34),

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Controlled-study execution and record association for article IV-A.
+"""Controlled-study execution and record association for article V-A.
 
 Study runs fixed starts and receding-horizon episodes, then associates distinct
 accepted candidates with unilateral searches. Archive owns record I/O;

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""PyBullet flight loop for cooperative and adversarial experiments (V-A/B).
+"""PyBullet flight loop for cooperative and adversarial experiments (VI-A/B).
 
 run_case connects measured states, planner solves, execution checks and PID.
 Article profiles are selected by tools/reproduce.py; physics pauses for solves."""
@@ -95,6 +95,7 @@ def run_case(name, variant, args, output, case_override=None):
                            velocity_weight=args.velocity_weight,
                            terminal_scale=args.terminal_scale if variant == "terminal" else 0.,
                            max_iterations=args.max_iterations, response_sweeps=args.response_sweeps,
+                           response_fractions=getattr(args, "response_fractions", (.7, .35, 1.)),
                            adversarial_weights=weights, input_bound=args.input_bound,
                            speed_bound=args.speed_bound, jerk_bound=args.jerk_bound,
                            cooperative_weights=cooperative_weights)
@@ -107,6 +108,7 @@ def run_case(name, variant, args, output, case_override=None):
                   horizon=model.horizon, block_lengths=lengths, control_blocks=model.blocking.blocks,
                   primal_variables=model.nvar, shared_inequalities=model.ng,
                   velocity_weight=model.velocity_weight, terminal_scale=model.terminal_scale,
+                  response_fractions=model.response_fractions, response_sweeps=model.response_sweeps,
                   adversarial_weights=asdict(weights), input_bound=model.input_bound,
                   cooperative_weights=asdict(cooperative_weights),
                   speed_bound=model.speed_bound, jerk_bound=model.jerk_bound,
@@ -175,6 +177,7 @@ def run_case(name, variant, args, output, case_override=None):
                         obstacles=case["obstacles"], velocity_weight=model.velocity_weight,
                         terminal_scale=model.terminal_scale, altitude_bounds=physical_altitude,
                         max_iterations=args.max_iterations, response_sweeps=args.response_sweeps,
+                        response_fractions=getattr(args, "response_fractions", (.7, .35, 1.)),
                         adversarial_weights=weights, input_bound=args.input_bound,
                         speed_bound=min(args.speed_bound+getattr(args, "recovery_speed_margin", .2), physical_speed_bound) if args.speed_bound is not None else None,
                         jerk_bound=args.emergency_jerk_bound if args.jerk_bound is not None else None,
@@ -452,6 +455,8 @@ def main():
     parser.add_argument("--terminal-scale", type=float, default=1.)
     parser.add_argument("--max-iterations", type=int, default=200)
     parser.add_argument("--response-sweeps", type=int, default=3)
+    parser.add_argument("--response-fractions", type=float, nargs="+", default=[.7, .35, 1.],
+                        help="Fractions of each proposed player update, tested in this order")
     parser.add_argument("--goal-weight", type=float, default=2.)
     parser.add_argument("--evasion-weight", type=float, default=50.)
     parser.add_argument("--input-bound", type=float, default=5.)

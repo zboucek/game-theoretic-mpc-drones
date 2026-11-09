@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
 
-"""NashOpt residual backend for the article's KKT method (III-B/D) and controlled study (IV-A).
+"""NashOpt residual backend for the article's KKT method (III-B and IV-B) and controlled study (V-A).
 
 _reusable_game binds UAV costs and constraints to reusable_gne; the blocked
 quadrotor controller is implemented in cooperative_equilibrium_mpc."""

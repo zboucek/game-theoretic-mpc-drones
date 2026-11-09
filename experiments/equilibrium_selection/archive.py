@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Raw attempt I/O, source recording and resumable checkpoints for article IV-A.
+"""Raw attempt I/O, source recording and resumable checkpoints for article V-A.
 
 Archive writes new experiment outputs. Bundled reference records are read
 through tools/results.py without resuming or modifying those inputs."""

@@ -13,20 +13,23 @@ def test_reference_manifest_covers_the_selected_archive_and_media():
 
     manifest = verified_manifest(ROOT)
     assert manifest["profile"] == "article"
-    assert manifest["audit_dataset"]["records"] > 16000
-    audit = manifest["audit_dataset"]
-    assert audit["doi"] is None or re.fullmatch(r"10\.\d{4,9}/\S+", audit["doi"])
-    assert json.loads((ROOT / "zenodo/files.json").read_text()) == audit
+    assert manifest["audit_dataset"]["doi"] is None
     assert len(manifest["audit_dataset"]["manifest_sha256"]) == 64
-    for folder in ("backend_choice", "weights/comparison", "weights/stopped_states"):
+    for folder in ("backend_choice", "weights"):
         assert not (ROOT / "data" / folder).exists()
-    assert not list((ROOT / "data/weights/calibration").glob("*/tracking_only"))
+    assert not any(check["key"].startswith("weights.") for check in manifest["checks"])
+    assert not (ROOT / "configs/weights.toml").exists()
     assert not (ROOT / "src/game_theory_mpc/adversarial_controller.py").exists()
     media = json.loads((ROOT / "media/cooperative.json").read_text())
     import zipfile
 
     with zipfile.ZipFile(ROOT / "data/reference.zip") as bundle:
         provenance = json.loads(bundle.read("provenance.json"))
+        assert "tuning.json" not in bundle.namelist()
+        assert "weights" not in json.loads(bundle.read("metrics.json"))
+        assert "nominal_weights" not in json.loads(bundle.read("metrics.json"))["adversarial"]
+        assert not any("/weights/" in name for name in bundle.namelist())
+    assert manifest["audit_dataset"]["records"] == provenance["source_files"]
     assert provenance["original_cooperative_sha256"] == media["source_sha256"]
 
 

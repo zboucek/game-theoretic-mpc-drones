@@ -1,5 +1,5 @@
 {
-  "title": "Numerical evidence for A Game-Theoretic MPC Framework for Cooperative and Adversarial Drone Coordination",
+  "title": "Numerical evidence for A Game-Theoretic MPC Planner for Cooperative and Adversarial Drone Coordination",
   "upload_type": "dataset",
   "version": "1.0.0",
   "access_right": "open",
@@ -10,7 +10,7 @@
       "affiliation": "University of West Bohemia"
     }
   ],
-  "description": "Complete retained evidence for six studies: controlled equilibria, coordinate tuning, scaling, cooperative flight, pursuit–evasion and laboratory tracking. Includes failed and approximate candidates, all twelve manual/automatic test pairs, checksums and independent-verification inputs. Requires the separately distributed MIT-licensed software.",
+  "description": "Retained evidence for five studies: controlled equilibria, scaling, cooperative flight, pursuit–evasion and laboratory tracking. Includes failed and approximate candidates, the matched damping comparison, checksums and independent-verification inputs. Weight-comparison and automatic weight-calibration studies are excluded; fixed objective weights remain in experiment configurations. Requires the separately distributed MIT-licensed software.",
   "keywords": [
     "model predictive control",
     "generalized Nash equilibrium",
@@ -23,6 +23,5 @@
       "relation": "isSupplementTo",
       "scheme": "url"
     }
-  ],
-  "doi": "10.5281/zenodo.23947592"
+  ]
 }

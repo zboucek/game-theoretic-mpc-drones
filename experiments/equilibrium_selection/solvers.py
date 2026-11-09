@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Controlled-study solver policies: article III-B/D and IV-A.
+"""Controlled-study solver policies: article sections III-B, IV-B and V-A.
 
 GNE/vGNE use reusable NashOpt residuals with TRF least squares; the exact
 potential uses SLSQP. NumpyModel checks outputs, and deviation_attempt searches

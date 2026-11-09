@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Render the cooperative-flight figure (V-A) from logged states.
+"""Render the cooperative-flight figure (VI-A) from logged states.
 
 All-pair clearance and goal distances use every sample; paths alone are
 downsampled for the vector plot. No controller is executed here."""

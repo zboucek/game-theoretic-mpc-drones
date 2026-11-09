@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Deterministic short-horizon study design: article IV-A.
+"""Deterministic short-horizon study design: article V-A.
 
 This tracking/effort/repulsion game deliberately omits the flight controller's
 velocity and terminal terms. Geometry, perturbations and common starts are

@@ -55,30 +55,16 @@ def nominal(config, method, directory):
         controls=inputs,
         targets=targets,
     )
-    if config.study == "weights":
-        from experiments.cooperative_weight_study import metrics
-
-        result = metrics(
-            times,
-            history,
-            inputs,
-            targets,
-            e.updates * m.dt,
-            termination,
-            accepted,
-            len(inputs),
-        )
-    else:
-        ids = slice(m.pursuers, None) if m.pursuers else slice(None)
-        errors = np.linalg.norm(np.asarray(history)[:, ids, :3] - targets[None], axis=2)
-        result = dict(
-            termination=termination,
-            duration_s=times[-1],
-            attempted=attempted,
-            accepted=accepted,
-            applied=len(inputs),
-            final_goal_distances_m=errors[-1],
-        )
+    ids = slice(m.pursuers, None) if m.pursuers else slice(None)
+    errors = np.linalg.norm(np.asarray(history)[:, ids, :3] - targets[None], axis=2)
+    result = dict(
+        termination=termination,
+        duration_s=times[-1],
+        attempted=attempted,
+        accepted=accepted,
+        applied=len(inputs),
+        final_goal_distances_m=errors[-1],
+    )
     write_json(directory / "metrics.json", result)
     return result
 
@@ -246,93 +232,6 @@ def controlled(config, output):
     return counts
 
 
-def tuning(config, output):
-    # Round-trippable double precision avoids merging distinct user-supplied weights.
-    def key(weights):
-        return "_".join(
-            format(float(value), ".17g").replace(".", "p") for value in weights
-        )
-
-    t = config.tuning
-    cache = {}
-
-    def evaluate(weights):
-        label = key(weights)
-        if label not in cache:
-            rows = []
-            for case in config.cases:
-                if case["phase"] != "train":
-                    continue
-                model = replace(
-                    config.model,
-                    states=case["states"],
-                    targets=case["targets"],
-                    position_weight=weights[0],
-                    velocity_weight=weights[1],
-                    repulsion_weight=weights[2],
-                )
-                rows.append(
-                    nominal(
-                        replace(config, model=model),
-                        "vgne",
-                        output / "design" / label / case["id"],
-                    )
-                )
-            eligible = all(r["success"] for r in rows)
-            cache[label] = dict(
-                weights=list(weights),
-                eligible=eligible,
-                score=float(np.mean([r["score"] for r in rows])) if eligible else None,
-            )
-        return cache[label]
-
-    current = evaluate(t.baseline)
-    trace = [list(t.baseline)]
-    if not current["eligible"]:
-        write_json(output / "search.json", cache)
-        raise RuntimeError(
-            "Baseline does not finish design tasks; diagnostics were retained. Increase duration or inspect configuration."
-        )
-    for axis, values in enumerate(t.axes):
-        options = [current]
-        for value in values:
-            candidate = current["weights"].copy()
-            candidate[axis] = value
-            options.append(evaluate(candidate))
-        current = min(
-            options, key=lambda r: float("inf") if not r["eligible"] else r["score"]
-        )
-        trace.append(current["weights"])
-    write_json(
-        output / "frozen_weights.json",
-        dict(
-            full=current["weights"],
-            coordinate_trace=trace,
-            design_scores=cache,
-            frozen_before_test=True,
-        ),
-    )
-    result = {}
-    for name, weights in (("manual", t.baseline), ("automatic", current["weights"])):
-        result[name] = {}
-        for case in config.cases:
-            if case["phase"] != "test":
-                continue
-            m = replace(
-                config.model,
-                states=case["states"],
-                targets=case["targets"],
-                position_weight=weights[0],
-                velocity_weight=weights[1],
-                repulsion_weight=weights[2],
-            )
-            result[name][case["id"]] = nominal(
-                replace(config, model=m), "vgne", output / "test" / name / case["id"]
-            )
-    write_json(output / "metrics.json", result)
-    return result
-
-
 def scalability(config, output):
     from experiments.benchmark_current_scalability import initial_controls
 
@@ -453,7 +352,6 @@ def run_experiment(config: ExperimentConfig, output_dir: str | Path) -> Path:
         else:
             {
                 "controlled": controlled,
-                "weights": tuning,
                 "scalability": scalability,
                 "laboratory": laboratory,
             }[config.study](config, output)

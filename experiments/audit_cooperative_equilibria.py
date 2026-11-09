@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Check cooperative flight candidates for article V-A.
+"""Check cooperative flight candidates for article VI-A.
 
 Independent JAX derivatives verify NumPy solver outputs, multiplier topology,
 active-set residuals and unilateral witnesses, including candidate repairs."""

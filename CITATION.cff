@@ -13,7 +13,7 @@ authors:
 repository-code: "https://github.com/zboucek/game-theoretic-mpc-drones"
 preferred-citation:
   type: unpublished
-  title: "A Game-Theoretic MPC Framework for Cooperative and Adversarial Drone Coordination"
+  title: "A Game-Theoretic MPC Planner for Cooperative and Adversarial Drone Coordination"
   year: 2026
   authors:
     - family-names: Bouček

@@ -1,12 +1,10 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Illustrate archived solution diagnostics and weight tuning without new solves."""
-import argparse
+"""Illustrate archived solution diagnostics without new solves."""
 from hashlib import sha256
 import json
 import os
 from pathlib import Path
-import sys
 
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/game-theory-mpc-manuscript-plots")
 os.environ.setdefault("XDG_CACHE_HOME", "/tmp/game-theory-mpc-manuscript-cache")
@@ -94,59 +92,6 @@ def diagnostic_data(source, inputs):
     assert findings["vgne"]["first_conflict_passage_s"] is None
     np.testing.assert_allclose(findings["potential"]["first_conflict_passage_s"], .7)
     return series, findings, targets
-
-
-def rollout_metrics(trajectory, arrival):
-    times, states, controls, targets = (trajectory[k] for k in ("times", "states", "controls", "targets"))
-    error2 = np.sum((states[:, :, :3] - targets[None]) ** 2, axis=2)
-    dt = np.diff(times)
-    integrated = float(np.sum(.5 * (error2[:-1].sum(axis=1) + error2[1:].sum(axis=1)) * dt))
-    effort = float(np.sum(np.sum(controls ** 2, axis=(1, 2)) * dt))
-    arrived = np.all((error2 <= arrival["distance"] ** 2)
-                     & (np.linalg.norm(states[:, :, 3:], axis=2) <= arrival["speed"]), axis=1)
-    joint = None
-    for i in np.flatnonzero(arrived):
-        end = np.searchsorted(times, times[i] + arrival["dwell_s"] - 1e-9)
-        if end < len(times) and np.all(arrived[i:end + 1]):
-            joint = float(times[i])
-            break
-    assert joint is not None
-    return dict(integrated_position_error_m2s=integrated, input_effort_m2_s3=effort, joint_arrival_s=joint)
-
-
-def tuning_data(source, inputs):
-    protocol = inputs.json(source / "manifest.json")["protocol"]
-    frozen = inputs.json(source / "frozen_weights.json")
-    assert frozen["frozen_before_test"]
-    np.testing.assert_array_equal(frozen["baseline"], [1, 1, 1])
-    np.testing.assert_array_equal(frozen["full"], [1, .3, 1])
-    assert protocol["effort_weight"] == .1
-    pairs = []
-    for case in protocol["cases"]["test"]:
-        values = []
-        for profile in ("baseline", "full"):
-            directory = source / "test" / profile / case["id"]
-            summary = inputs.json(directory / "summary.json")
-            trajectory = inputs.trajectory(directory / "trajectory.npz")
-            assert summary["success"] and summary["completed"]
-            np.testing.assert_allclose(trajectory["states"][0], case["states"])
-            np.testing.assert_array_equal(trajectory["targets"], case["targets"])
-            np.testing.assert_allclose(trajectory["times"][-1], 10.)
-            measured = rollout_metrics(trajectory, protocol["arrival"])
-            for field, value in measured.items():
-                np.testing.assert_allclose(value, summary[field], rtol=1e-12, atol=1e-12)
-            values.append(measured)
-        manual, tuned = values
-        pair = dict(case=case["id"], family=case["family"],
-                    error_change_percent=100 * (tuned["integrated_position_error_m2s"] / manual["integrated_position_error_m2s"] - 1),
-                    effort_change_percent=100 * (tuned["input_effort_m2_s3"] / manual["input_effort_m2_s3"] - 1),
-                    arrival_change_s=tuned["joint_arrival_s"] - manual["joint_arrival_s"])
-        pairs.append(pair)
-    assert len(pairs) == 12 and sum(p["error_change_percent"] > 0 for p in pairs) == 2
-    assert all(p["effort_change_percent"] > 0 and p["arrival_change_s"] < 0 for p in pairs)
-    medians = {field: float(np.median([p[field] for p in pairs]))
-               for field in ("error_change_percent", "effort_change_percent", "arrival_change_s")}
-    return pairs, medians
 
 
 def save_figure(fig, output, name):
@@ -415,72 +360,11 @@ def plot_article_diagnostic(series, targets, output):
     return outputs + save_figure(fig, output, "numerical_conflict_legend")
 
 
-def plot_tuning(pairs, medians, output):
-    fig, axes = plt.subplots(1, 3, figsize=(3.48, 2.15), layout="constrained")
-    fields = (("error_change_percent", "Position error", "%", (-4.5, 4.5), [-4, 0, 4]),
-              ("effort_change_percent", "Control effort", "%", (-2., 34.), [0, 15, 30]),
-              ("arrival_change_s", "Arrival time", "s", (-.45, .05), [-.4, -.2, 0]))
-    labels = [f"H{i + 1}" for i in range(6)] + [f"C{i + 1}" for i in range(6)]
-    for column, (axis, (field, title, unit, limits, ticks)) in enumerate(zip(axes, fields)):
-        axis.axvline(0, color=".45", ls=":", lw=.8)
-        axis.axhline(5.5, color=".65", lw=.65)
-        for i, pair in enumerate(pairs):
-            axis.plot([0, pair[field]], [i, i], color=".55", lw=.65)
-            axis.plot(pair[field], i, "o", color=".15", ms=3., zorder=3)
-        axis.axvline(medians[field], color="black", ls="--", lw=.75)
-        axis.set(xlim=limits, ylim=(11.65, -.65), xlabel=f"Change [{unit}]",
-                 title=f"{medians[field]:+.2f}{unit}", xticks=ticks, yticks=range(12))
-        axis.set_yticklabels(labels if column == 0 else [])
-        axis.tick_params(labelsize=6.5, pad=2)
-        axis.yaxis.set_tick_params(length=0)
-        axis.xaxis.label.set_size(7.)
-        axis.title.set_size(7.)
-        axis.grid(axis="y", alpha=.15, lw=.5)
-
-    # Native LaTeX supplies the common weight header and panel captions.
-    # Export each panel alone, keeping a common height for aligned case rows.
-    fig.canvas.draw()
-    renderer = fig.canvas.get_renderer()
-    boxes = [axis.get_tightbbox(renderer) for axis in axes]
-    bottom, top = min(box.y0 for box in boxes), max(box.y1 for box in boxes)
-    fig.set_layout_engine("none")
-    for axis in axes:
-        axis.set_visible(False)
-    outputs = []
-    for name, axis, box in zip(("a", "b", "c"), axes, boxes):
-        axis.set_visible(True)
-        crop = Bbox.from_extents(box.x0, bottom, box.x1, top)
-        crop = crop.transformed(fig.dpi_scale_trans.inverted()).padded(.02)
-        for extension in ("pdf", "png"):
-            path = output / f"weight_tuning_{name}.{extension}"
-            fig.savefig(path, bbox_inches=crop, dpi=220, metadata={"Creator": Path(__file__).name})
-            outputs.append(path)
-        axis.set_visible(False)
-
-    # The standalone preview includes the same weights and bottom labels.
-    for column, (axis, (_, title, *_)) in enumerate(zip(axes, fields)):
-        axis.set_visible(True)
-        axis.set_xlabel(axis.get_xlabel() + f"\n({chr(97 + column)}) {title}", fontsize=7.)
-    fig.suptitle("Manual $\\longrightarrow$ tuned: $q_v:1\\longrightarrow0.3$\n"
-                 "Fixed: $q_p=w_{\\mathrm{rep}}=1$, $r=0.1$", fontsize=7.)
-    fig.set_layout_engine("constrained")
-    fig.set_size_inches(3.48, 2.65)
-    return outputs + save_figure(fig, output, "weight_tuning_design_transfer")
-
-
-def generate(equilibria, weights, output):
-    """Regenerate composed article figures from portable numerical data."""
-    import tempfile
-    import shutil
-    output = Path(output); output.mkdir(parents=True, exist_ok=True)
+def generate(equilibria, output):
+    """Regenerate the conflict figure from portable numerical data."""
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=True)
     inputs = Inputs()
     series, findings, targets = diagnostic_data(Path(equilibria), inputs)
-    pairs, medians = tuning_data(Path(weights), inputs)
-    with tempfile.TemporaryDirectory() as tmp:
-        temporary = Path(tmp)
-        plot_diagnostic(series, targets, temporary)
-        plot_tuning(pairs, medians, temporary)
-        for name in ('numerical_conflict_example', 'weight_tuning_design_transfer'):
-            shutil.copyfile(temporary / (name + '.pdf'), output / (name + '.pdf'))
-    return dict(diagnostic=findings, tuning_pairs=pairs, tuning_medians=medians,
-                input_sha256=inputs.hashes)
+    plot_diagnostic(series, targets, output)
+    return dict(diagnostic=findings, input_sha256=inputs.hashes)

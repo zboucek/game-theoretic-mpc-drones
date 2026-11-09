@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Independent NumPy dynamics, costs and numerical checks for article IV-A.
+"""Independent NumPy dynamics, costs and numerical checks for article V-A.
 
 NumpyModel evaluates stored controls and reconstructs multiplier conditions.
 The JAX/NashOpt optimization path is in solvers.py, keeping checks independent."""

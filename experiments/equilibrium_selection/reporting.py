@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Independent re-evaluation of controlled-study records (article IV-A).
+"""Independent re-evaluation of controlled-study records (article V-A).
 
 audit checks dynamics, objectives, KKT acceptance and unilateral witnesses.
 It is called on a disposable data copy by tools/results.py."""

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
 
-"""Reusable NashOpt KKT residuals and Jacobians: article III-B/D and IV-A.
+"""Reusable NashOpt KKT residuals and Jacobians: article sections III-B, IV-B and V-A.
 
 ParametricGNEP provides player derivatives, bound complementarity and the
 GNE/vGNE multiplier layout. Runtime parameters carry states and targets;

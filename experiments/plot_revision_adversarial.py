@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Render pursuit-evasion results (V-B) at first simultaneous arrival.
+"""Render pursuit-evasion results (VI-B) at first simultaneous arrival.
 
-The same distance/speed stopping event truncates every panel and metric.
-nominal_comparison evaluates all four weight profiles at that same time."""
+The same distance/speed stopping event truncates every panel and metric."""
 import argparse
 from hashlib import sha256
 import json
@@ -34,53 +33,9 @@ def digest(path):
     return sha256(path.read_bytes()).hexdigest()
 
 
-def nominal_comparison(root, endpoint, inputs):
-    """Evaluate all weight profiles at one common time using exact dynamics."""
-    compact = root / "reference.json"
-    if compact.is_file():
-        rows = read(compact)
-        if any(abs(row['evaluation_time_s']-endpoint)>1e-10 for row in rows):
-            raise ValueError('Compact weight rows have a different evaluation time')
-        inputs.append(compact)
-        return rows
-    rows = []
-    for label in ("original", "goal20", "goal100", "goal100_escape10"):
-        parent = root/label
-        directory = parent/"nominal_adversarial_terminal"
-        config_path, trajectory = directory/"config.json", directory/"trajectory.npz"
-        validation = parent/"independent_validation.json"
-        assert read(validation)["passed"]
-        config = read(config_path)
-        with np.load(trajectory) as archive:
-            times, states, targets = archive["times"], archive["states"], archive["targets"]
-        k = int(np.searchsorted(times, endpoint, side="right")-1)
-        assert 0 <= k < len(times)-1 and times[k] <= endpoint <= times[k+1]
-        attempt = directory/"attempts"/f"k{k:03d}.json"
-        record = read(attempt)
-        assert record["feasible"]
-        np.testing.assert_allclose(states[k], record["states"], rtol=0., atol=1e-12)
-        acceleration = np.asarray(record["controls"])[:, 0]
-        def advance(delta):
-            value = states[k].copy()
-            value[:, :3] += delta*value[:, 3:]+.5*delta**2*acceleration
-            value[:, 3:] += delta*acceleration
-            return value
-        np.testing.assert_allclose(advance(config["dt"]), states[k+1], rtol=0., atol=1e-11)
-        value = advance(endpoint-times[k])
-        weights = config["adversarial_weights"]
-        rows.append(dict(profile=label, goal_weight=weights["goal"], evasion_weight=weights["evasion"],
-                         evaluation_time_s=endpoint,
-                         goal_errors_m=np.linalg.norm(value[3:, :3]-targets, axis=1).tolist(),
-                         speeds_mps=np.linalg.norm(value[3:, 3:], axis=1).tolist(),
-                         evaluation="Exact double-integrator state inside the recorded control interval"))
-        inputs.extend([config_path, trajectory, validation, attempt])
-    return rows
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True, help="Selected original-PID flight root")
-    parser.add_argument("--weights", type=Path, required=True, help="Matched nominal weight-profile archive")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     from tools.reproduce import writable_output
@@ -125,7 +80,6 @@ def main():
                    at_goal_before_terminal_sample=at_goal[end-1].tolist(),
                    termination="first_simultaneous_goal_arrival",
                    arrival_definition="Both evaders simultaneously have goal distance <= 0.25 m and speed <= 0.30 m/s")
-    weights = nominal_comparison(args.weights, duration, inputs)
     plt.rcParams.update({"font.size": 8, "axes.labelsize": 8, "axes.titlesize": 8,
                          "xtick.labelsize": 7, "ytick.labelsize": 7,
                          "legend.fontsize": 7, "pdf.fonttype": 42})
@@ -193,7 +147,6 @@ def main():
                     source_sha256={os.path.relpath(p, ROOT): digest(p) for p in sources},
                     input_sha256={os.path.relpath(p, ROOT): digest(p) for p in inputs},
                     output_sha256={p.name: digest(p) for p in outputs}, metrics=metrics,
-                    nominal_weight_comparison=weights,
                     evaluation_window=dict(start_s=0., end_s=duration, source_end_index=end,
                         stopping_rule="First logged state satisfying both evaders' distance/speed arrival criteria simultaneously"),
                     display="3D paths sampled every sixth evaluated state plus the terminal sample; all distance curves/metrics end at first simultaneous arrival. Vertical scale expanded for visibility. Arrows at 6 s. No new simulation.",
@@ -203,7 +156,7 @@ def main():
                                        caption_position="below each panel"),
                     role_styles=dict(pursuers="solid", evaders="dashed"))
     (args.output/"adversarial_arrival_manifest.json").write_text(json.dumps(manifest, indent=2)+"\n")
-    print(json.dumps(dict(flight=metrics, nominal_weight_comparison=weights)))
+    print(json.dumps(dict(flight=metrics)))
 
 
 if __name__ == "__main__":

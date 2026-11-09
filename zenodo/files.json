@@ -1,12 +1,11 @@
 {
-  "manifest_sha256": "14718dd0353371a6af981e04a399f80f0ff2722800b454e850a4ea44dc415b69",
+  "manifest_sha256": "1778b9d85895fb2ce57b4566377e8e4400c4c7589d193c9ae614073759f52b5a",
   "filename": "release-game-theory-mpc-article-data-1.0.0.tar.xz",
   "version": "1.0.0",
-  "sha256": "d6d94ad9ceac6219bcbfbe36208d3ef87ea6069e89325803b2d443d78e8a92a7",
-  "bytes": 69228368,
-  "records": 16319,
-  "doi": "10.5281/zenodo.23947592",
+  "sha256": "59b49b648ddd91b1f3202dadae59036e4ffb22e3bbc444b126fe6df476560da0",
+  "bytes": 31398848,
+  "records": 9425,
+  "doi": null,
   "url": null,
-  "publication_status": "DOI assigned",
-  "record_url": "https://doi.org/10.5281/zenodo.23947592"
+  "publication_status": "prepared locally; not published"
 }

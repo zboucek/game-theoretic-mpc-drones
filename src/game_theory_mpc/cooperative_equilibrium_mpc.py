@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Cooperative flight solver: article IV-B/C and V-A.
+"""Cooperative flight solver: article IV-B/C and VI-A.
 
 The model is inherited from blocked_game_mpc. CooperativeDerivatives supplies
 analytic NumPy derivatives; CooperativeEquilibriumMPC selects GNE or vGNE,

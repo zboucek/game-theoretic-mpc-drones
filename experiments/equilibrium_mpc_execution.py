@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Nominal first-interval execution checks for article IV-B and V-A/B.
+"""Nominal first-interval execution checks for article IV-C and VI-A/B.
 
 The flight and weight drivers call first_interval_extrema to check motion
 between prediction nodes. Nominal feasibility, numerical equilibrium

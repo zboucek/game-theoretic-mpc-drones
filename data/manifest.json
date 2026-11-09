@@ -9,7 +9,6 @@
     "cooperative-flight",
     "pursuit-evasion",
     "equilibrium-selection",
-    "weight-tuning",
     "scalability",
     "hardware"
   ],
@@ -245,11 +244,6 @@
       "atol": 5e-06
     },
     {
-      "key": "weights.design_improvement_percent",
-      "expected": 2.42,
-      "atol": 0.005
-    },
-    {
       "key": "scalability.h30_ratios.gne",
       "expected": 3.61,
       "atol": 0.005
@@ -280,79 +274,34 @@
       "atol": 0
     },
     {
-      "key": "weights.test.manual.cases",
-      "expected": 12,
+      "key": "adversarial.relaxation.damped.duration_s",
+      "expected": 30.0,
+      "atol": 1e-08
+    },
+    {
+      "key": "adversarial.relaxation.damped.joint_arrival_s",
+      "expected": 16.35,
+      "atol": 1e-08
+    },
+    {
+      "key": "adversarial.relaxation.damped.selected_35_percent",
+      "expected": 0,
       "atol": 0
     },
     {
-      "key": "weights.test.manual.success",
-      "expected": 12,
-      "atol": 0
+      "key": "adversarial.relaxation.full.duration_s",
+      "expected": 2.5,
+      "atol": 1e-08
     },
     {
-      "key": "weights.test.manual.accepted",
-      "expected": 1200,
-      "atol": 0
+      "key": "adversarial.relaxation.full.maximum_next_altitude_m",
+      "expected": 0.294006,
+      "atol": 1e-06
     },
     {
-      "key": "weights.test.manual.applied",
-      "expected": 1200,
-      "atol": 0
-    },
-    {
-      "key": "weights.test.automatic.cases",
-      "expected": 12,
-      "atol": 0
-    },
-    {
-      "key": "weights.test.automatic.success",
-      "expected": 12,
-      "atol": 0
-    },
-    {
-      "key": "weights.test.automatic.accepted",
-      "expected": 1196,
-      "atol": 0
-    },
-    {
-      "key": "weights.test.automatic.applied",
-      "expected": 1200,
-      "atol": 0
-    },
-    {
-      "key": "weights.test.paired_medians.error_change_percent",
-      "expected": -1.28,
-      "atol": 0.005
-    },
-    {
-      "key": "weights.test.paired_medians.effort_change_percent",
-      "expected": 12.43,
-      "atol": 0.005
-    },
-    {
-      "key": "weights.test.paired_medians.arrival_change_s",
-      "expected": -0.4,
-      "atol": 0.005
-    },
-    {
-      "key": "weights.physics.manual.accepted",
-      "expected": 199,
-      "atol": 0
-    },
-    {
-      "key": "weights.physics.automatic.accepted",
-      "expected": 200,
-      "atol": 0
-    },
-    {
-      "key": "weights.physics.manual.applied",
-      "expected": 200,
-      "atol": 0
-    },
-    {
-      "key": "weights.physics.automatic.applied",
-      "expected": 200,
-      "atol": 0
+      "key": "adversarial.relaxation.full.lower_altitude_bound_m",
+      "expected": 0.3,
+      "atol": 1e-08
     }
   ],
   "profile": "article",
@@ -364,31 +313,29 @@
     "docs/figures/numerical_conflict_example.pdf"
   ],
   "supporting_figures": [
-    "docs/figures/weight_tuning_design_transfer.pdf",
     "docs/figures/hardware_xy.pdf",
     "docs/figures/hardware_timing.pdf"
   ],
-  "source_repository_commit": "481076c4a5dff93a7b1d30e1e7c2a2794a664657",
-  "manuscript_sha256": "7001befb5406cae820d70111be2294cae370ca6fc8169372e2362feecef34b09",
+  "source_repository_commit": "4b1387e5f502eb93d862e1da82a858945e23fef3",
+  "manuscript_sha256": "412bce9e2c9ac36333b450ab10b79fdbb15648a47e36f560ccb870643652ef7a",
   "distribution": "compact-software",
   "audit_dataset": {
-    "manifest_sha256": "14718dd0353371a6af981e04a399f80f0ff2722800b454e850a4ea44dc415b69",
+    "manifest_sha256": "1778b9d85895fb2ce57b4566377e8e4400c4c7589d193c9ae614073759f52b5a",
     "filename": "release-game-theory-mpc-article-data-1.0.0.tar.xz",
     "version": "1.0.0",
-    "sha256": "d6d94ad9ceac6219bcbfbe36208d3ef87ea6069e89325803b2d443d78e8a92a7",
-    "bytes": 69228368,
-    "records": 16319,
-    "doi": "10.5281/zenodo.23947592",
+    "sha256": "59b49b648ddd91b1f3202dadae59036e4ffb22e3bbc444b126fe6df476560da0",
+    "bytes": 31398848,
+    "records": 9425,
+    "doi": null,
     "url": null,
-    "publication_status": "DOI assigned",
-    "record_url": "https://doi.org/10.5281/zenodo.23947592"
+    "publication_status": "prepared locally; not published"
   },
   "reference_views": "data/reference.zip contains plotting inputs and published summaries; it is not the full numerical audit.",
   "files": [
     {
       "path": "data/README.md",
-      "sha256": "f4275a172fb5c355b284de387a7671581bdf15e7043d7b464c237a4d58c1dfb6",
-      "bytes": 355
+      "sha256": "2d4302fc852206c4e48946cbf04c588297545ddb1a819a48ac7d608899a61cc9",
+      "bytes": 356
     },
     {
       "path": "data/hardware/run.csv",
@@ -397,8 +344,8 @@
     },
     {
       "path": "data/reference.zip",
-      "sha256": "d6ddcbdb3e1149a7dd11eb7589273134063efede2a3867baff8e74a8203105dc",
-      "bytes": 2586375
+      "sha256": "66bcd3cf80e29222f175be491d38a7e91e7a890c766e2685ae687b81458a1508",
+      "bytes": 2583987
     },
     {
       "path": "dependencies/gym_pybullet_drones-2.2.0+mpc.01563120-py3-none-any.whl",
@@ -432,13 +379,8 @@
     },
     {
       "path": "docs/figures/scalability_current.pdf",
-      "sha256": "83a93b5fda251f6a58f61ab8cc19cf2e537f36e423e882554c8524e5318de691",
-      "bytes": 25442
-    },
-    {
-      "path": "docs/figures/weight_tuning_design_transfer.pdf",
-      "sha256": "e219d517a29af35a4d5761d231ba852b756464451b24d470b5725c910b54b950",
-      "bytes": 24668
+      "sha256": "5f5ea205a1cafe4d2b1cec0c937eb43ef3474fa77a88a98b180a80a656d53f0d",
+      "bytes": 25337
     },
     {
       "path": "media/cooperative.gif",

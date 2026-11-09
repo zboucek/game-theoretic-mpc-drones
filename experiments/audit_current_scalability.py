@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Check every warmup/timed record and matched pair for article IV-C.
+"""Check every warmup/timed record and matched pair for article V-B.
 
 Cooperative numerical acceptance and adversarial model feasibility are
 separate outcomes. Validation runs after measurement and is not timed."""

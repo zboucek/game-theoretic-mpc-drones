@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright 2026 Zdeněk Bouček
-"""Move-blocked UAV model and primal solvers: article IV-C and V-A/B.
+"""Move-blocked UAV model and primal solvers: article V-B and VI-A/B.
 
 MoveBlocking expands decisions to every prediction node. BlockedGameMPC
 provides dynamics, costs and constraints; cooperative_equilibrium_mpc adds
@@ -128,7 +128,7 @@ class BlockedGameMPC:
                  hard_pairs=None, separation=.55, altitude_bounds=(.35, 1.95),
                  input_bound=5., max_iterations=200, response_sweeps=3,
                  adversarial_weights=None, speed_bound=None, jerk_bound=None,
-                 cooperative_weights=None):
+                 cooperative_weights=None, response_fractions=(.7, .35, 1.)):
         """Build a fixed-size condensed model for cooperative or adversarial planning.
 
         block_lengths determines H and the number of decision blocks B. States
@@ -150,6 +150,10 @@ class BlockedGameMPC:
             raise ValueError("Invalid altitude bounds")
         if any(value is not None and (not np.isfinite(value) or value <= 0) for value in (speed_bound, jerk_bound)):
             raise ValueError("Speed and jerk bounds must be finite and positive")
+        response_fractions = tuple(response_fractions)
+        if (not response_fractions
+                or any(not np.isfinite(value) or not 0 < value <= 1 for value in response_fractions)):
+            raise ValueError("Response fractions must be nonempty and lie in (0, 1]")
         self.blocking = MoveBlocking(tuple(block_lengths))
         self.num_agents, self.num_pursuers = num_agents, num_pursuers
         self.num_evaders = num_agents-num_pursuers if num_pursuers else 0
@@ -168,6 +172,7 @@ class BlockedGameMPC:
         self.hard_pairs = not self.adversarial if hard_pairs is None else hard_pairs
         self.separation, self.altitude_bounds, self.input_bound = separation, altitude_bounds, input_bound
         self.max_iterations, self.response_sweeps = max_iterations, response_sweeps
+        self.response_fractions = response_fractions
         self.obstacles = np.asarray(obstacles, dtype=float).reshape(-1, 3)
         self.pairs = tuple(combinations(range(num_agents), 2))
         self.ng = (len(self.pairs)*self.horizon if self.hard_pairs else 0)
@@ -393,6 +398,7 @@ class BlockedGameMPC:
         parameters = self.parameters(states, targets)
         started = perf_counter()
         attempts = []
+        sweep_changes = []
         joint = self._warm.ravel().copy()
         constraints = ({"type": "ineq", "fun": lambda x: -np.asarray(self.constraints(x, parameters)),
                         "jac": lambda x: -np.asarray(self.constraint_jacobian(x, parameters))} if self.ng else ())
@@ -448,7 +454,7 @@ class BlockedGameMPC:
                     improved = feasible and (not old_feasible or data["costs"][player] <= old_cost+1e-8)
                     used_fraction = 0.
                     if improved:
-                        for fraction in (.7, .35, 1.):
+                        for fraction in self.response_fractions:
                             trial = insert(fraction*result.x+(1-fraction)*fixed[own])
                             trial_data = self.evaluate_numpy(trial, states, targets)
                             if ((not old_feasible or trial_data["costs"][player] <= old_cost+1e-8)
@@ -460,8 +466,10 @@ class BlockedGameMPC:
                         status=int(result.status), iterations=int(result.nit), feasible=feasible,
                         restored_feasibility=bool(not old_feasible and used_fraction > 0),
                         improvement=float(old_cost-data["costs"][player]), used=used_fraction > 0,
+                        proposed_change=float(np.max(np.abs(result.x-fixed[own]))),
                         fraction=used_fraction))
                 change = float(np.max(np.abs(joint-before_sweep)))
+                sweep_changes.append(change)
                 if change < 1e-3:
                     break
         data = self.evaluate_numpy(joint, states, targets)
@@ -472,6 +480,7 @@ class BlockedGameMPC:
         info = dict(compute_time=perf_counter()-started, feasible=feasible, costs=data["costs"],
                     cost_terms=data["terms"], blocked_controls=joint.reshape(self.num_agents, self.blocking.blocks, 3),
                     solver="damped_primal_best_response" if self.adversarial else "exact_potential_slsqp",
-                    response_change=change, attempts=attempts,
+                    response_change=change, response_sweep_changes=sweep_changes,
+                    response_fractions=self.response_fractions, attempts=attempts,
                     interpretation="Local numerical candidate; global equilibrium is not certified")
         return data["full_controls"], data["prediction"], info
