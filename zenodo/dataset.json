@@ -19,6 +19,11 @@
   ],
   "related_identifiers": [
     {
+      "identifier": "10.48550/arXiv.2611.12226",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    },
+    {
       "identifier": "https://github.com/zboucek/game-theoretic-mpc-drones",
       "relation": "isSupplementTo",
       "scheme": "url"

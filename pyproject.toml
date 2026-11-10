@@ -28,6 +28,7 @@ dev = ["build>=1,<2", "twine>=6,<7"]
 
 [project.urls]
 Repository = "https://github.com/zboucek/game-theoretic-mpc-drones"
+Paper = "https://arxiv.org/abs/2611.12226"
 
 [tool.setuptools]
 packages = ["game_theory_mpc", "experiments", "experiments.equilibrium_selection", "tools"]

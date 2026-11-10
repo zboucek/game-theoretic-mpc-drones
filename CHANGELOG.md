@@ -1,5 +1,7 @@
 # Changes
 
+2026-11-10: link the public arXiv preprint (10.48550/arXiv.2611.12226) from the README, preferred citation, package metadata and proposed Zenodo dataset metadata. Add a BibTeX citation and record the pending ECC 2027 submission in the README.
+
 2026-11-09: exclude the four nominal pursuit–evasion weight-comparison profiles from the article audit dataset and compact inputs. Remove their comparison code and audit steps from the article software. Retain fixed objective weights, the flight evidence and the damping comparison.
 
 2026-11-09: align the paper citation and dataset title with the final manuscript title, “A Game-Theoretic MPC Planner for Cooperative and Adversarial Drone Coordination”. Numerical inputs and study scope are unchanged.

@@ -12,8 +12,11 @@ authors:
     email: zboucek@fav.zcu.cz
 repository-code: "https://github.com/zboucek/game-theoretic-mpc-drones"
 preferred-citation:
-  type: unpublished
+  type: article
   title: "A Game-Theoretic MPC Planner for Cooperative and Adversarial Drone Coordination"
+  journal: arXiv
+  doi: "10.48550/arXiv.2611.12226"
+  url: "https://arxiv.org/abs/2611.12226"
   year: 2026
   authors:
     - family-names: Bouček
